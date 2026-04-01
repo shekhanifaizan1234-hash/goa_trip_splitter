@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goa Trip Expense Splitter</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #FFB74D 0%, #FF9800 25%, #FFA726 50%, #FF7043 75%, #FF5722 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Beach sand texture effect */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 200, 100, 0.15) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .palm-decoration {
+            position: fixed;
+            font-size: 80px;
+            opacity: 0.1;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .palm-1 {
+            top: 10%;
+            right: 5%;
+            animation: sway 4s ease-in-out infinite;
+        }
+
+        .palm-2 {
+            bottom: 15%;
+            left: 3%;
+            animation: sway 5s ease-in-out infinite reverse;
+        }
+
+        @keyframes sway {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(2deg); }
+        }
+
+        .container {
+            background: linear-gradient(135deg, #FFFFFF 0%, #FFF8E1 100%);
+            border-radius: 24px;
+            box-shadow: 0 30px 80px rgba(255, 87, 34, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            padding: 40px;
+            max-width: 1000px;
+            width: 100%;
+            position: relative;
+            z-index: 10;
+            border: 2px solid rgba(255, 152, 0, 0.3);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 3px dashed rgba(255, 152, 0, 0.4);
+            padding-bottom: 20px;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            background: linear-gradient(135deg, #D84315 0%, #FF6F00 50%, #FFB74D 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+            font-size: 42px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            text-align: center;
+            background: linear-gradient(135deg, #E65100 0%, #FF9800 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: linear-gradient(135deg, #FFF9E6 0%, #FFECB3 50%, #FFE082 100%);
+            border: 2px solid rgba(255, 152, 0, 0.5);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 8px 24px rgba(255, 87, 34, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255, 193, 7, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .card-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .card h3 {
+            font-size: 12px;
+            color: #E65100;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+        }
+
+        .card-amount {
+            font-family: 'Playfair Display', serif;
+            font-size: 42px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #D84315 0%, #FF6F00 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            color: #E65100;
+            margin-bottom: 8px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid rgba(255, 152, 0, 0.4);
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #FFFEF5 0%, #FFFEF5 100%);
+            color: #333;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input::placeholder {
+            color: rgba(230, 81, 0, 0.5);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #FF6F00;
+            box-shadow: 0 0 0 4px rgba(255, 152, 0, 0.2);
+            background: #FFFEF5;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #D84315 0%, #FF6F00 50%, #FFB74D 100%);
+            color: white;
+            box-shadow: 0 8px 20px rgba(255, 87, 34, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(255, 87, 34, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #FFF9E6 0%, #FFECB3 100%);
+            color: #E65100;
+            border: 2px solid rgba(255, 152, 0, 0.5);
+            font-weight: 700;
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #FFECB3 0%, #FFE082 100%);
+            box-shadow: 0 8px 20px rgba(255, 87, 34, 0.2);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #E53935 0%, #D32F2F 100%);
+            color: white;
+            font-size: 12px;
+            padding: 10px 12px;
+            width: auto;
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #D32F2F 0%, #C62828 100%);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #FFE082 0%, #FFD54F 50%, #FFCA28 100%);
+            border: 2px solid rgba(255, 152, 0, 0.6);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 8px 24px rgba(255, 87, 34, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #D84315;
+            margin-bottom: 8px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .stat-value {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: #D84315;
+            position: relative;
+            z-index: 2;
+        }
+
+        .settlement-box {
+            background: linear-gradient(135deg, #2E7D32 0%, #43A047 50%, #66BB6A 100%);
+            color: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 30px;
+            display: none;
+            box-shadow: 0 8px 24px rgba(46, 125, 50, 0.25);
+            border: 2px solid rgba(102, 187, 106, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .settlement-box.show {
+            display: block;
+            animation: slideDown 0.4s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .settlement-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .settlement-label {
+            font-size: 12px;
+            opacity: 0.95;
+            margin-bottom: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .settlement-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            font-weight: 700;
+            position: relative;
+            z-index: 2;
+        }
+
+        .expenses-section {
+            margin-bottom: 30px;
+        }
+
+        .expenses-section h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            background: linear-gradient(135deg, #D84315 0%, #FF6F00 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+
+        .expenses-list {
+            border: 2px solid rgba(255, 152, 0, 0.4);
+            border-radius: 16px;
+            max-height: 450px;
+            overflow-y: auto;
+            background: linear-gradient(135deg, #FFFEF5 0%, #FFFEF5 100%);
+            box-shadow: inset 0 2px 8px rgba(255, 87, 34, 0.05);
+        }
+
+        .expenses-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .expenses-list::-webkit-scrollbar-track {
+            background: rgba(255, 152, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        .expenses-list::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #FFB74D 0%, #FF9800 100%);
+            border-radius: 10px;
+        }
+
+        .expense-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            border-bottom: 1px dashed rgba(255, 152, 0, 0.3);
+            background: white;
+            transition: all 0.2s ease;
+        }
+
+        .expense-item:hover {
+            background: rgba(255, 152, 0, 0.05);
+        }
+
+        .expense-item:last-child {
+            border-bottom: none;
+        }
+
+        .expense-details {
+            flex: 1;
+        }
+
+        .expense-payer {
+            font-weight: 700;
+            color: #D84315;
+            font-size: 14px;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .expense-description {
+            font-size: 12px;
+            color: #FF9800;
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        .expense-amount {
+            font-weight: 700;
+            background: linear-gradient(135deg, #D84315 0%, #FF6F00 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 16px;
+            margin-right: 16px;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .expense-date {
+            font-size: 11px;
+            color: #B3E5FC;
+            white-space: nowrap;
+            margin-right: 12px;
+            background: rgba(255, 152, 0, 0.1);
+            padding: 4px 8px;
+            border-radius: 8px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: rgba(255, 152, 0, 0.6);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 30px;
+        }
+
+        .success-message {
+            background: linear-gradient(135deg, #2E7D32 0%, #43A047 100%);
+            color: white;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: none;
+            animation: slideIn 0.3s ease;
+            border: 2px solid rgba(102, 187, 106, 0.4);
+            font-weight: 600;
+            box-shadow: 0 8px 20px rgba(46, 125, 50, 0.2);
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 32px;
+            }
+
+            .container {
+                padding: 24px;
+                border-radius: 20px;
+            }
+
+            .card-amount {
+                font-size: 32px;
+            }
+
+            .stat-value {
+                font-size: 24px;
+            }
+
+            .settlement-text {
+                font-size: 20px;
+            }
+
+            .palm-1, .palm-2 {
+                font-size: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="palm-decoration palm-1">🌴</div>
+    <div class="palm-decoration palm-2">🥥</div>
+
+    <div class="container">
+        <div class="header">
+            <h1>🏖️ GOA TRIP EXPENSE SPLITTER</h1>
+            <p class="subtitle">✨ Split Expenses Between Faizan & Anis ✨</p>
+        </div>
+
+        <div class="success-message" id="successMessage">✓ Expense added successfully!</div>
+
+        <div class="main-grid">
+            <div class="card">
+                <div class="card-content">
+                    <h3>Who Paid?</h3>
+                    <div class="form-group">
+                        <select id="payer">
+                            <option>Faizan</option>
+                            <option>Anis</option>
+                        </select>
+                    </div>
+
+                    <h3>Amount (₹)</h3>
+                    <div class="form-group">
+                        <input type="number" id="amount" placeholder="0.00" min="0" step="0.01">
+                    </div>
+
+                    <h3>Description (Optional)</h3>
+                    <div class="form-group">
+                        <input type="text" id="description" placeholder="e.g., Hotel, Food, Transport">
+                    </div>
+
+                    <button class="btn btn-primary" onclick="addExpense()">+ Add Expense</button>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <div class="card">
+                    <div class="card-content">
+                        <h3>💰 Faizan Total</h3>
+                        <div class="card-amount">₹<span id="faizan-total">0</span></div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-content">
+                        <h3>💰 Anis Total</h3>
+                        <div class="card-amount">₹<span id="anis-total">0</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-box">
+                <div class="stat-label">🌊 Trip Total</div>
+                <div class="stat-value">₹<span id="trip-total">0</span></div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">🍹 Per Person Share</div>
+                <div class="stat-value">₹<span id="per-person">0</span></div>
+            </div>
+        </div>
+
+        <div class="settlement-box" id="settlement">
+            <div class="settlement-label">💸 SETTLEMENT</div>
+            <div class="settlement-text" id="settlement-text"></div>
+        </div>
+
+        <div class="expenses-section">
+            <h2>📋 Expense History</h2>
+            <div class="expenses-list" id="expenses-list">
+                <div class="empty-state">No expenses yet. Start adding! 🌴</div>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button class="btn btn-secondary" onclick="clearAll()">🗑️ Clear All</button>
+            <button class="btn btn-secondary" onclick="downloadExpenses()">📥 Download CSV</button>
+        </div>
+    </div>
+
+    <script>
+        let expenses = JSON.parse(localStorage.getItem('goa_expenses')) || [];
+
+        function updateUI() {
+            const faizanTotal = expenses
+                .filter(e => e.payer === 'Faizan')
+                .reduce((sum, e) => sum + parseFloat(e.amount), 0);
+
+            const anisTotal = expenses
+                .filter(e => e.payer === 'Anis')
+                .reduce((sum, e) => sum + parseFloat(e.amount), 0);
+
+            const tripTotal = faizanTotal + anisTotal;
+            const perPerson = tripTotal / 2;
+
+            document.getElementById('faizan-total').textContent = (Math.round(faizanTotal * 100) / 100).toFixed(2);
+            document.getElementById('anis-total').textContent = (Math.round(anisTotal * 100) / 100).toFixed(2);
+            document.getElementById('trip-total').textContent = (Math.round(tripTotal * 100) / 100).toFixed(2);
+            document.getElementById('per-person').textContent = (Math.round(perPerson * 100) / 100).toFixed(2);
+
+            // Render expense list
+            const list = document.getElementById('expenses-list');
+            if (expenses.length === 0) {
+                list.innerHTML = '<div class="empty-state">No expenses yet. Start adding! 🌴</div>';
+            } else {
+                list.innerHTML = expenses.map((e, i) => `
+                    <div class="expense-item">
+                        <div class="expense-details">
+                            <div class="expense-payer">${e.payer}</div>
+                            <div class="expense-description">${e.description || 'Expense'}</div>
+                        </div>
+                        <div class="expense-date">${e.date}</div>
+                        <div class="expense-amount">₹${(Math.round(e.amount * 100) / 100).toFixed(2)}</div>
+                        <button class="btn btn-danger" onclick="deleteExpense(${i})">Delete</button>
+                    </div>
+                `).join('');
+            }
+
+            // Calculate settlement
+            if (Math.abs(faizanTotal - anisTotal) > 0.01) {
+                const diff = faizanTotal - anisTotal;
+                const settlementDiv = document.getElementById('settlement');
+                const settlementText = document.getElementById('settlement-text');
+                settlementDiv.classList.add('show');
+
+                if (diff > 0) {
+                    settlementText.textContent = `Anis owes Faizan ₹${(Math.round(Math.abs(diff) * 100) / 100).toFixed(2)}`;
+                } else {
+                    settlementText.textContent = `Faizan owes Anis ₹${(Math.round(Math.abs(diff) * 100) / 100).toFixed(2)}`;
+                }
+            } else {
+                document.getElementById('settlement').classList.remove('show');
+            }
+
+            localStorage.setItem('goa_expenses', JSON.stringify(expenses));
+        }
+
+        function addExpense() {
+            const payer = document.getElementById('payer').value;
+            const amount = parseFloat(document.getElementById('amount').value);
+            const description = document.getElementById('description').value;
+
+            if (!amount || amount <= 0) {
+                alert('Please enter a valid amount');
+                return;
+            }
+
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('en-IN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+            expenses.push({ payer, amount, description, date: dateStr });
+            document.getElementById('amount').value = '';
+            document.getElementById('description').value = '';
+            
+            // Show success message
+            const successMsg = document.getElementById('successMessage');
+            successMsg.classList.add('show');
+            setTimeout(() => successMsg.classList.remove('show'), 2000);
+
+            updateUI();
+        }
+
+        function deleteExpense(index) {
+            if (confirm('Delete this expense?')) {
+                expenses.splice(index, 1);
+                updateUI();
+            }
+        }
+
+        function clearAll() {
+            if (confirm('Are you sure you want to clear all expenses? This cannot be undone.')) {
+                expenses = [];
+                updateUI();
+            }
+        }
+
+        function downloadExpenses() {
+            if (expenses.length === 0) {
+                alert('No expenses to download');
+                return;
+            }
+
+            let csv = 'Payer,Amount (₹),Description,Date\n';
+            expenses.forEach(e => {
+                csv += `${e.payer},${e.amount},"${e.description || '-'}",${e.date}\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'goa-trip-expenses.csv';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        updateUI();
+    </script>
+</body>
+</html>
