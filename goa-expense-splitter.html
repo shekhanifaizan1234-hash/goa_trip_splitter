@@ -3,739 +3,808 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Goa Trip Expense Splitter</title>
+    <title>Trip Expense Splitter</title>
+    <meta name="theme-color" content="#0f766e">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --bg-1: #0f766e;
+            --bg-2: #1e3a8a;
+            --surface: #ffffff;
+            --surface-2: #f1f5f9;
+            --border: #e2e8f0;
+            --text: #0f172a;
+            --muted: #64748b;
+            --primary: #0d9488;
+            --primary-dark: #0f766e;
+            --primary-soft: #ccfbf1;
+            --accent: #f97316;
+            --accent-soft: #ffedd5;
+            --danger: #dc2626;
+            --danger-soft: #fee2e2;
+            --good: #16a34a;
+            --shadow: 0 20px 50px rgba(15, 23, 42, 0.25);
+        }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-1: #042f2e;
+                --bg-2: #0b1338;
+                --surface: #0f172a;
+                --surface-2: #1e293b;
+                --border: #334155;
+                --text: #e2e8f0;
+                --muted: #94a3b8;
+                --primary: #2dd4bf;
+                --primary-dark: #14b8a6;
+                --primary-soft: #134e4a;
+                --accent: #fb923c;
+                --accent-soft: #431407;
+                --danger: #f87171;
+                --danger-soft: #450a0a;
+                --good: #4ade80;
+                --shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            }
         }
 
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { background: var(--bg-2); }
         body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #FFB74D 0%, #FF9800 25%, #FFA726 50%, #FF7043 75%, #FF5722 100%);
-            background-attachment: fixed;
+            font-family: 'Poppins', system-ui, sans-serif;
+            background: linear-gradient(160deg, var(--bg-1) 0%, var(--bg-2) 100%) no-repeat;
+            color: var(--text);
             min-height: 100vh;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            overflow-x: hidden;
+            padding: 24px 16px 48px;
         }
 
-        /* Beach sand texture effect */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(255, 200, 100, 0.15) 0%, transparent 50%);
-            pointer-events: none;
-            z-index: 0;
-        }
+        .container { max-width: 960px; margin: 0 auto; }
 
-        .palm-decoration {
-            position: fixed;
-            font-size: 80px;
-            opacity: 0.1;
-            z-index: 1;
-            pointer-events: none;
-        }
+        /* Header */
+        .header { text-align: center; color: #fff; margin-bottom: 20px; }
+        .header h1 { font-size: 30px; font-weight: 700; letter-spacing: 0.5px; }
+        .header p { opacity: 0.85; font-size: 14px; margin-top: 4px; }
 
-        .palm-1 {
-            top: 10%;
-            right: 5%;
-            animation: sway 4s ease-in-out infinite;
+        /* Trip bar */
+        .trip-bar {
+            display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+            background: rgba(255,255,255,0.12); backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 16px; padding: 10px; margin-bottom: 20px;
         }
-
-        .palm-2 {
-            bottom: 15%;
-            left: 3%;
-            animation: sway 5s ease-in-out infinite reverse;
+        .trip-bar select {
+            flex: 1; min-width: 160px; padding: 10px 12px; border-radius: 10px;
+            border: none; font: inherit; font-weight: 600; background: #fff; color: #0f172a;
         }
-
-        @keyframes sway {
-            0%, 100% { transform: rotate(0deg); }
-            50% { transform: rotate(2deg); }
+        .chip-btn {
+            border: none; border-radius: 10px; padding: 10px 14px; font: inherit;
+            font-size: 13px; font-weight: 600; cursor: pointer;
+            background: rgba(255,255,255,0.2); color: #fff; white-space: nowrap;
         }
+        .chip-btn:hover { background: rgba(255,255,255,0.32); }
 
-        .container {
-            background: linear-gradient(135deg, #FFFFFF 0%, #FFF8E1 100%);
-            border-radius: 24px;
-            box-shadow: 0 30px 80px rgba(255, 87, 34, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.6);
-            padding: 40px;
-            max-width: 1000px;
-            width: 100%;
-            position: relative;
-            z-index: 10;
-            border: 2px solid rgba(255, 152, 0, 0.3);
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-            border-bottom: 3px dashed rgba(255, 152, 0, 0.4);
-            padding-bottom: 20px;
-        }
-
-        h1 {
-            font-family: 'Playfair Display', serif;
-            background: linear-gradient(135deg, #D84315 0%, #FF6F00 50%, #FFB74D 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 8px;
-            font-size: 42px;
-            font-weight: 700;
-            letter-spacing: 1px;
-        }
-
-        .subtitle {
-            text-align: center;
-            background: linear-gradient(135deg, #E65100 0%, #FF9800 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-size: 16px;
-            font-weight: 600;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        .main-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-            margin-bottom: 30px;
-        }
-
+        /* Cards */
         .card {
-            background: linear-gradient(135deg, #FFF9E6 0%, #FFECB3 50%, #FFE082 100%);
-            border: 2px solid rgba(255, 152, 0, 0.5);
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 8px 24px rgba(255, 87, 34, 0.15);
-            position: relative;
-            overflow: hidden;
+            background: var(--surface); border-radius: 18px; padding: 20px;
+            box-shadow: var(--shadow); margin-bottom: 20px;
         }
+        .card h2 {
+            font-size: 16px; font-weight: 700; margin-bottom: 14px;
+            display: flex; align-items: center; justify-content: space-between; gap: 8px;
+        }
+        .card h2 .hint { font-size: 12px; font-weight: 500; color: var(--muted); }
 
-        .card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 200px;
-            height: 200px;
-            background: radial-gradient(circle, rgba(255, 193, 7, 0.1) 0%, transparent 70%);
-            border-radius: 50%;
-        }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .grid-2 > .card { margin-bottom: 0; }
+        .grid-2 { margin-bottom: 20px; }
 
-        .card-content {
-            position: relative;
-            z-index: 2;
+        /* Forms */
+        label.field-label {
+            display: block; font-size: 12px; font-weight: 600; color: var(--muted);
+            text-transform: uppercase; letter-spacing: 0.8px; margin: 12px 0 6px;
         }
-
-        .card h3 {
-            font-size: 12px;
-            color: #E65100;
-            text-transform: uppercase;
-            margin-bottom: 12px;
-            font-weight: 700;
-            letter-spacing: 1.5px;
+        input[type=text], input[type=number], input[type=date], select.input {
+            width: 100%; padding: 12px 14px; border: 1.5px solid var(--border);
+            border-radius: 12px; font: inherit; font-size: 15px;
+            background: var(--surface-2); color: var(--text);
         }
-
-        .card-amount {
-            font-family: 'Playfair Display', serif;
-            font-size: 42px;
-            font-weight: 700;
-            background: linear-gradient(135deg, #D84315 0%, #FF6F00 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 12px;
+        input:focus, select.input:focus {
+            outline: none; border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-soft);
         }
-
-        .form-group {
-            margin-bottom: 18px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 12px;
-            color: #E65100;
-            margin-bottom: 8px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 14px 16px;
-            border: 2px solid rgba(255, 152, 0, 0.4);
-            border-radius: 12px;
-            font-size: 14px;
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #FFFEF5 0%, #FFFEF5 100%);
-            color: #333;
-            transition: all 0.3s ease;
-        }
-
-        .form-group input::placeholder {
-            color: rgba(230, 81, 0, 0.5);
-        }
-
-        .form-group input:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: #FF6F00;
-            box-shadow: 0 0 0 4px rgba(255, 152, 0, 0.2);
-            background: #FFFEF5;
-        }
+        .row { display: flex; gap: 10px; }
+        .row > * { flex: 1; }
 
         .btn {
-            width: 100%;
-            padding: 14px 24px;
-            border: none;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-family: 'Poppins', sans-serif;
+            border: none; border-radius: 12px; padding: 12px 18px; font: inherit;
+            font-size: 14px; font-weight: 600; cursor: pointer; transition: transform .15s, filter .15s;
+        }
+        .btn:active { transform: scale(0.98); }
+        .btn-primary { background: var(--primary); color: #fff; width: 100%; margin-top: 16px; }
+        .btn-primary:hover { filter: brightness(1.08); }
+        .btn-soft { background: var(--surface-2); color: var(--text); border: 1.5px solid var(--border); }
+        .btn-soft:hover { border-color: var(--primary); }
+        .btn-whatsapp { background: #25d366; color: #fff; }
+        .btn-small { padding: 8px 12px; font-size: 13px; }
+        .btn-icon {
+            background: transparent; border: none; cursor: pointer; color: var(--muted);
+            font-size: 16px; padding: 6px; border-radius: 8px;
+        }
+        .btn-icon:hover { background: var(--danger-soft); color: var(--danger); }
+
+        /* Friends */
+        .friends-list { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+        .friend-chip {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: var(--surface-2); border: 1.5px solid var(--border);
+            border-radius: 999px; padding: 4px 6px 4px 4px; font-size: 14px; font-weight: 500;
+        }
+        .friend-chip button {
+            background: none; border: none; color: var(--muted); cursor: pointer;
+            font-size: 14px; width: 22px; height: 22px; border-radius: 50%;
+        }
+        .friend-chip button:hover { background: var(--danger-soft); color: var(--danger); }
+        .avatar {
+            width: 26px; height: 26px; border-radius: 50%; color: #fff;
+            display: inline-flex; align-items: center; justify-content: center;
+            font-size: 12px; font-weight: 700; flex-shrink: 0;
+        }
+        .avatar.lg { width: 34px; height: 34px; font-size: 14px; }
+
+        /* Category picker */
+        .cat-picker { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .cat-option input { display: none; }
+        .cat-option span {
+            display: block; text-align: center; padding: 10px 4px; border-radius: 12px;
+            border: 1.5px solid var(--border); background: var(--surface-2);
+            font-size: 13px; font-weight: 500; cursor: pointer;
+        }
+        .cat-option input:checked + span {
+            border-color: var(--primary); background: var(--primary-soft); font-weight: 700;
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, #D84315 0%, #FF6F00 50%, #FFB74D 100%);
-            color: white;
-            box-shadow: 0 8px 20px rgba(255, 87, 34, 0.3);
+        /* Split picker */
+        .split-head { display: flex; justify-content: space-between; align-items: center; margin: 12px 0 6px; }
+        .split-head label.field-label { margin: 0; }
+        .link-btn { background: none; border: none; color: var(--primary); font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; }
+        .split-picker { display: flex; flex-wrap: wrap; gap: 8px; }
+        .split-option input { display: none; }
+        .split-option span {
+            display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px 6px 6px;
+            border-radius: 999px; border: 1.5px solid var(--border); background: var(--surface-2);
+            font-size: 13px; cursor: pointer; opacity: 0.55;
+        }
+        .split-option input:checked + span {
+            border-color: var(--primary); background: var(--primary-soft); opacity: 1; font-weight: 600;
+        }
+        .split-note { font-size: 12px; color: var(--muted); margin-top: 8px; }
+
+        /* Stats */
+        .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+        .stat {
+            background: var(--surface); border-radius: 16px; padding: 16px; box-shadow: var(--shadow);
+        }
+        .stat .label { font-size: 12px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; }
+        .stat .value { font-size: 24px; font-weight: 700; margin-top: 4px; }
+        .stat.highlight { background: linear-gradient(135deg, var(--primary) 0%, #2563eb 100%); color: #fff; }
+        .stat.highlight .label { color: rgba(255,255,255,0.85); }
+
+        /* Balances */
+        .balance-row {
+            display: flex; align-items: center; gap: 10px; padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .balance-row:last-child { border-bottom: none; }
+        .balance-name { flex: 1; font-weight: 600; font-size: 14px; }
+        .balance-name small { display: block; font-weight: 400; color: var(--muted); font-size: 12px; }
+        .balance-amt { font-weight: 700; font-size: 14px; text-align: right; }
+        .pos { color: var(--good); }
+        .neg { color: var(--danger); }
+
+        .settle-item {
+            display: flex; align-items: center; gap: 10px; padding: 12px;
+            background: var(--accent-soft); border-radius: 12px; margin-bottom: 8px; font-size: 14px;
+        }
+        .settle-item .arrow { color: var(--accent); font-weight: 700; }
+        .settle-item .amt { margin-left: auto; font-weight: 700; white-space: nowrap; }
+        .all-settled {
+            text-align: center; padding: 16px; border-radius: 12px;
+            background: var(--primary-soft); font-weight: 600;
         }
 
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 32px rgba(255, 87, 34, 0.4);
+        /* Category bars */
+        .cat-row { margin-bottom: 12px; }
+        .cat-row-top { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 4px; }
+        .cat-row-top b { font-weight: 700; }
+        .bar { height: 8px; background: var(--surface-2); border-radius: 999px; overflow: hidden; }
+        .bar > div { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--primary), #2563eb); }
+
+        /* Expense list */
+        .filter-row { display: flex; gap: 8px; margin-bottom: 12px; }
+        .filter-row select { flex: 1; padding: 8px 10px; font-size: 13px; }
+        .expense {
+            display: flex; align-items: center; gap: 12px; padding: 12px 0;
+            border-bottom: 1px solid var(--border);
         }
-
-        .btn-primary:active {
-            transform: translateY(-1px);
+        .expense:last-child { border-bottom: none; }
+        .expense-emoji {
+            width: 40px; height: 40px; border-radius: 12px; background: var(--surface-2);
+            display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;
         }
-
-        .btn-secondary {
-            background: linear-gradient(135deg, #FFF9E6 0%, #FFECB3 100%);
-            color: #E65100;
-            border: 2px solid rgba(255, 152, 0, 0.5);
-            font-weight: 700;
+        .expense-main { flex: 1; min-width: 0; }
+        .expense-title { font-weight: 600; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .expense-meta { font-size: 12px; color: var(--muted); }
+        .expense-amt { font-weight: 700; font-size: 15px; white-space: nowrap; }
+        .date-divider {
+            font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase;
+            letter-spacing: 0.6px; padding: 14px 0 4px;
         }
+        .empty { text-align: center; color: var(--muted); padding: 28px 12px; font-size: 14px; }
 
-        .btn-secondary:hover {
-            background: linear-gradient(135deg, #FFECB3 0%, #FFE082 100%);
-            box-shadow: 0 8px 20px rgba(255, 87, 34, 0.2);
+        .actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+
+        /* Toast */
+        .toast {
+            position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(120px);
+            background: #0f172a; color: #fff; padding: 12px 20px; border-radius: 12px;
+            font-size: 14px; font-weight: 500; transition: transform .3s; z-index: 100;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); max-width: calc(100% - 32px);
         }
+        .toast.show { transform: translateX(-50%) translateY(0); }
 
-        .btn-danger {
-            background: linear-gradient(135deg, #E53935 0%, #D32F2F 100%);
-            color: white;
-            font-size: 12px;
-            padding: 10px 12px;
-            width: auto;
-        }
-
-        .btn-danger:hover {
-            background: linear-gradient(135deg, #D32F2F 0%, #C62828 100%);
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 30px;
-        }
-
-        .stat-box {
-            background: linear-gradient(135deg, #FFE082 0%, #FFD54F 50%, #FFCA28 100%);
-            border: 2px solid rgba(255, 152, 0, 0.6);
-            border-radius: 16px;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 8px 24px rgba(255, 87, 34, 0.15);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-box::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 150px;
-            height: 150px;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
-            border-radius: 50%;
-        }
-
-        .stat-label {
-            font-size: 12px;
-            color: #D84315;
-            margin-bottom: 8px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            position: relative;
-            z-index: 2;
-        }
-
-        .stat-value {
-            font-family: 'Playfair Display', serif;
-            font-size: 32px;
-            font-weight: 700;
-            color: #D84315;
-            position: relative;
-            z-index: 2;
-        }
-
-        .settlement-box {
-            background: linear-gradient(135deg, #2E7D32 0%, #43A047 50%, #66BB6A 100%);
-            color: white;
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 30px;
-            display: none;
-            box-shadow: 0 8px 24px rgba(46, 125, 50, 0.25);
-            border: 2px solid rgba(102, 187, 106, 0.4);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .settlement-box.show {
-            display: block;
-            animation: slideDown 0.4s ease;
-        }
-
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .settlement-box::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 200px;
-            height: 200px;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
-            border-radius: 50%;
-        }
-
-        .settlement-label {
-            font-size: 12px;
-            opacity: 0.95;
-            margin-bottom: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            position: relative;
-            z-index: 2;
-        }
-
-        .settlement-text {
-            font-family: 'Playfair Display', serif;
-            font-size: 24px;
-            font-weight: 700;
-            position: relative;
-            z-index: 2;
-        }
-
-        .expenses-section {
-            margin-bottom: 30px;
-        }
-
-        .expenses-section h2 {
-            font-family: 'Playfair Display', serif;
-            font-size: 20px;
-            background: linear-gradient(135deg, #D84315 0%, #FF6F00 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 16px;
-            font-weight: 600;
-        }
-
-        .expenses-list {
-            border: 2px solid rgba(255, 152, 0, 0.4);
-            border-radius: 16px;
-            max-height: 450px;
-            overflow-y: auto;
-            background: linear-gradient(135deg, #FFFEF5 0%, #FFFEF5 100%);
-            box-shadow: inset 0 2px 8px rgba(255, 87, 34, 0.05);
-        }
-
-        .expenses-list::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .expenses-list::-webkit-scrollbar-track {
-            background: rgba(255, 152, 0, 0.1);
-            border-radius: 10px;
-        }
-
-        .expenses-list::-webkit-scrollbar-thumb {
-            background: linear-gradient(135deg, #FFB74D 0%, #FF9800 100%);
-            border-radius: 10px;
-        }
-
-        .expense-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px;
-            border-bottom: 1px dashed rgba(255, 152, 0, 0.3);
-            background: white;
-            transition: all 0.2s ease;
-        }
-
-        .expense-item:hover {
-            background: rgba(255, 152, 0, 0.05);
-        }
-
-        .expense-item:last-child {
-            border-bottom: none;
-        }
-
-        .expense-details {
-            flex: 1;
-        }
-
-        .expense-payer {
-            font-weight: 700;
-            color: #D84315;
-            font-size: 14px;
-            font-family: 'Playfair Display', serif;
-        }
-
-        .expense-description {
-            font-size: 12px;
-            color: #FF9800;
-            margin-top: 4px;
-            font-weight: 500;
-        }
-
-        .expense-amount {
-            font-weight: 700;
-            background: linear-gradient(135deg, #D84315 0%, #FF6F00 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-size: 16px;
-            margin-right: 16px;
-            font-family: 'Playfair Display', serif;
-        }
-
-        .expense-date {
-            font-size: 11px;
-            color: #B3E5FC;
-            white-space: nowrap;
-            margin-right: 12px;
-            background: rgba(255, 152, 0, 0.1);
-            padding: 4px 8px;
-            border-radius: 8px;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 50px 20px;
-            color: rgba(255, 152, 0, 0.6);
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .button-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-top: 30px;
-        }
-
-        .success-message {
-            background: linear-gradient(135deg, #2E7D32 0%, #43A047 100%);
-            color: white;
-            padding: 16px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            display: none;
-            animation: slideIn 0.3s ease;
-            border: 2px solid rgba(102, 187, 106, 0.4);
-            font-weight: 600;
-            box-shadow: 0 8px 20px rgba(46, 125, 50, 0.2);
-        }
-
-        .success-message.show {
-            display: block;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-15px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @media (max-width: 768px) {
-            .main-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .button-group {
-                grid-template-columns: 1fr;
-            }
-
-            h1 {
-                font-size: 32px;
-            }
-
-            .container {
-                padding: 24px;
-                border-radius: 20px;
-            }
-
-            .card-amount {
-                font-size: 32px;
-            }
-
-            .stat-value {
-                font-size: 24px;
-            }
-
-            .settlement-text {
-                font-size: 20px;
-            }
-
-            .palm-1, .palm-2 {
-                font-size: 60px;
-            }
+        @media (max-width: 720px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            .stats { grid-template-columns: 1fr 1fr; }
+            .stats .stat.highlight { grid-column: span 2; }
+            .actions { grid-template-columns: 1fr; }
+            .header h1 { font-size: 24px; }
+            .stat .value { font-size: 20px; }
         }
     </style>
 </head>
 <body>
-    <div class="palm-decoration palm-1">🌴</div>
-    <div class="palm-decoration palm-2">🥥</div>
+<div class="container">
+    <div class="header">
+        <h1>🏖️ Trip Expense Splitter</h1>
+        <p>Add friends, log expenses, and see who owes whom</p>
+    </div>
 
-    <div class="container">
-        <div class="header">
-            <h1>🏖️ GOA TRIP EXPENSE SPLITTER</h1>
-            <p class="subtitle">✨ Split Expenses Between Faizan & Anis ✨</p>
+    <!-- Trip selector -->
+    <div class="trip-bar">
+        <select id="tripSelect" onchange="switchTrip(this.value)" aria-label="Choose trip"></select>
+        <button class="chip-btn" onclick="newTrip()">＋ New trip</button>
+        <button class="chip-btn" onclick="renameTrip()">✏️ Rename</button>
+        <button class="chip-btn" onclick="deleteTrip()">🗑️ Delete</button>
+    </div>
+
+    <!-- Friends -->
+    <div class="card">
+        <h2>👥 Friends on this trip <span class="hint" id="friendCount"></span></h2>
+        <div class="friends-list" id="friendsList"></div>
+        <div class="row">
+            <input type="text" id="friendName" placeholder="Friend's name (add as many as you like)" maxlength="400"
+                   onkeydown="if(event.key==='Enter') addFriend()">
+            <button class="btn btn-soft" style="flex:0 0 auto" onclick="addFriend()">＋ Add</button>
         </div>
+        <p class="split-note">Tip: type several names at once separated by commas, like <i>Rahul, Priya, Aman</i></p>
+    </div>
 
-        <div class="success-message" id="successMessage">✓ Expense added successfully!</div>
+    <div class="grid-2">
+        <!-- Add expense -->
+        <div class="card">
+            <h2>➕ Add an expense</h2>
 
-        <div class="main-grid">
-            <div class="card">
-                <div class="card-content">
-                    <h3>Who Paid?</h3>
-                    <div class="form-group">
-                        <select id="payer">
-                            <option>Faizan</option>
-                            <option>Anis</option>
-                        </select>
-                    </div>
+            <label class="field-label" for="payer">Who paid?</label>
+            <select class="input" id="payer"></select>
 
-                    <h3>Amount (₹)</h3>
-                    <div class="form-group">
-                        <input type="number" id="amount" placeholder="0.00" min="0" step="0.01">
-                    </div>
-
-                    <h3>Description (Optional)</h3>
-                    <div class="form-group">
-                        <input type="text" id="description" placeholder="e.g., Hotel, Food, Transport">
-                    </div>
-
-                    <button class="btn btn-primary" onclick="addExpense()">+ Add Expense</button>
+            <div class="row">
+                <div>
+                    <label class="field-label" for="amount">Amount (₹)</label>
+                    <input type="number" id="amount" placeholder="0" min="0" step="0.01" inputmode="decimal">
+                </div>
+                <div>
+                    <label class="field-label" for="date">Date</label>
+                    <input type="date" id="date">
                 </div>
             </div>
 
-            <div style="display: flex; flex-direction: column; gap: 12px;">
-                <div class="card">
-                    <div class="card-content">
-                        <h3>💰 Faizan Total</h3>
-                        <div class="card-amount">₹<span id="faizan-total">0</span></div>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-content">
-                        <h3>💰 Anis Total</h3>
-                        <div class="card-amount">₹<span id="anis-total">0</span></div>
-                    </div>
-                </div>
+            <label class="field-label" for="description">What was it for?</label>
+            <input type="text" id="description" placeholder="e.g. Dinner at the beach shack" maxlength="60">
+
+            <label class="field-label">Category</label>
+            <div class="cat-picker" id="catPicker"></div>
+
+            <div class="split-head">
+                <label class="field-label">Split between</label>
+                <button class="link-btn" onclick="toggleAllSplit()" id="toggleSplitBtn">Select none</button>
             </div>
+            <div class="split-picker" id="splitPicker"></div>
+            <p class="split-note" id="splitNote"></p>
+
+            <button class="btn btn-primary" onclick="addExpense()">＋ Add expense</button>
         </div>
 
-        <div class="stats-grid">
-            <div class="stat-box">
-                <div class="stat-label">🌊 Trip Total</div>
-                <div class="stat-value">₹<span id="trip-total">0</span></div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-label">🍹 Per Person Share</div>
-                <div class="stat-value">₹<span id="per-person">0</span></div>
-            </div>
-        </div>
+        <!-- Settle up -->
+        <div class="card">
+            <h2>🤝 Who owes whom</h2>
+            <div id="settlements"></div>
 
-        <div class="settlement-box" id="settlement">
-            <div class="settlement-label">💸 SETTLEMENT</div>
-            <div class="settlement-text" id="settlement-text"></div>
-        </div>
-
-        <div class="expenses-section">
-            <h2>📋 Expense History</h2>
-            <div class="expenses-list" id="expenses-list">
-                <div class="empty-state">No expenses yet. Start adding! 🌴</div>
-            </div>
-        </div>
-
-        <div class="button-group">
-            <button class="btn btn-secondary" onclick="clearAll()">🗑️ Clear All</button>
-            <button class="btn btn-secondary" onclick="downloadExpenses()">📥 Download CSV</button>
+            <h2 style="margin-top:20px">📊 Balances <span class="hint">paid minus share</span></h2>
+            <div id="balances"></div>
         </div>
     </div>
 
-    <script>
-        let expenses = JSON.parse(localStorage.getItem('goa_expenses')) || [];
+    <!-- Stats -->
+    <div class="stats">
+        <div class="stat highlight">
+            <div class="label">🌊 Trip total</div>
+            <div class="value" id="tripTotal">₹0</div>
+        </div>
+        <div class="stat">
+            <div class="label">🧾 Expenses</div>
+            <div class="value" id="expenseCount">0</div>
+        </div>
+        <div class="stat">
+            <div class="label">🍹 Avg per person</div>
+            <div class="value" id="avgPerPerson">₹0</div>
+        </div>
+    </div>
 
-        function updateUI() {
-            const faizanTotal = expenses
-                .filter(e => e.payer === 'Faizan')
-                .reduce((sum, e) => sum + parseFloat(e.amount), 0);
+    <!-- Categories -->
+    <div class="card">
+        <h2>🏷️ Spending by category</h2>
+        <div id="categoryBreakdown"></div>
+    </div>
 
-            const anisTotal = expenses
-                .filter(e => e.payer === 'Anis')
-                .reduce((sum, e) => sum + parseFloat(e.amount), 0);
+    <!-- History -->
+    <div class="card">
+        <h2>📋 Expense history</h2>
+        <div class="filter-row">
+            <select class="input" id="filterCat" onchange="render()" aria-label="Filter by category"></select>
+            <select class="input" id="filterPerson" onchange="render()" aria-label="Filter by person"></select>
+        </div>
+        <div id="expenseList"></div>
+    </div>
 
-            const tripTotal = faizanTotal + anisTotal;
-            const perPerson = tripTotal / 2;
+    <div class="actions">
+        <button class="btn btn-whatsapp" onclick="shareWhatsApp()">📲 Share on WhatsApp</button>
+        <button class="btn btn-soft" onclick="downloadCSV()">📥 Download CSV</button>
+        <button class="btn btn-soft" onclick="clearExpenses()">🧹 Clear expenses</button>
+    </div>
+</div>
 
-            document.getElementById('faizan-total').textContent = (Math.round(faizanTotal * 100) / 100).toFixed(2);
-            document.getElementById('anis-total').textContent = (Math.round(anisTotal * 100) / 100).toFixed(2);
-            document.getElementById('trip-total').textContent = (Math.round(tripTotal * 100) / 100).toFixed(2);
-            document.getElementById('per-person').textContent = (Math.round(perPerson * 100) / 100).toFixed(2);
+<div class="toast" id="toast"></div>
 
-            // Render expense list
-            const list = document.getElementById('expenses-list');
-            if (expenses.length === 0) {
-                list.innerHTML = '<div class="empty-state">No expenses yet. Start adding! 🌴</div>';
-            } else {
-                list.innerHTML = expenses.map((e, i) => `
-                    <div class="expense-item">
-                        <div class="expense-details">
-                            <div class="expense-payer">${e.payer}</div>
-                            <div class="expense-description">${e.description || 'Expense'}</div>
-                        </div>
-                        <div class="expense-date">${e.date}</div>
-                        <div class="expense-amount">₹${(Math.round(e.amount * 100) / 100).toFixed(2)}</div>
-                        <button class="btn btn-danger" onclick="deleteExpense(${i})">Delete</button>
+<script>
+    // ---------- Constants ----------
+    const STORAGE_KEY = 'trip_splitter_v2';
+    const OLD_KEY = 'goa_expenses';
+    const CATEGORIES = [
+        { id: 'food', label: 'Food', emoji: '🍕' },
+        { id: 'travel', label: 'Travel', emoji: '🚕' },
+        { id: 'stay', label: 'Stay', emoji: '🏨' },
+        { id: 'fun', label: 'Fun', emoji: '🎉' },
+        { id: 'shopping', label: 'Shopping', emoji: '🛍️' },
+        { id: 'other', label: 'Other', emoji: '📦' },
+    ];
+    const AVATAR_COLORS = ['#0d9488', '#2563eb', '#f97316', '#db2777', '#7c3aed',
+                           '#16a34a', '#dc2626', '#0891b2', '#ca8a04', '#4f46e5'];
+
+    // ---------- Helpers ----------
+    const $ = id => document.getElementById(id);
+    const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+    const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const money = n => '₹' + (Math.round(n * 100) / 100).toLocaleString('en-IN', { maximumFractionDigits: 2 });
+    const todayISO = () => {
+        const d = new Date();
+        return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+    };
+    const prettyDate = iso => {
+        if (!iso) return 'No date';
+        const d = new Date(iso + 'T00:00:00');
+        return isNaN(d) ? iso : d.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+    };
+    const catById = id => CATEGORIES.find(c => c.id === id) || CATEGORIES[CATEGORIES.length - 1];
+
+    function toast(msg) {
+        const t = $('toast');
+        t.textContent = msg;
+        t.classList.add('show');
+        clearTimeout(toast._t);
+        toast._t = setTimeout(() => t.classList.remove('show'), 2200);
+    }
+
+    // ---------- State ----------
+    let state = load();
+
+    function load() {
+        try {
+            const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+            if (saved && Array.isArray(saved.trips) && saved.trips.length) return saved;
+        } catch (e) { /* ignore */ }
+
+        // First run: build a Goa trip, carrying over any expenses from the old version
+        const faizan = { id: uid(), name: 'Faizan' };
+        const anis = { id: uid(), name: 'Anis' };
+        const trip = { id: uid(), name: 'Goa Trip 🏖️', friends: [faizan, anis], expenses: [] };
+        try {
+            const old = JSON.parse(localStorage.getItem(OLD_KEY)) || [];
+            trip.expenses = old.map(e => ({
+                id: uid(),
+                payerId: e.payer === 'Anis' ? anis.id : faizan.id,
+                amount: parseFloat(e.amount) || 0,
+                description: e.description || '',
+                category: 'other',
+                date: '',
+                splitIds: [faizan.id, anis.id],
+            })).filter(e => e.amount > 0);
+        } catch (e) { /* ignore */ }
+        return { currentTripId: trip.id, trips: [trip] };
+    }
+
+    function save() {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) { /* ignore */ }
+    }
+
+    const trip = () => state.trips.find(t => t.id === state.currentTripId) || state.trips[0];
+    const friendById = id => trip().friends.find(f => f.id === id);
+    const friendName = id => (friendById(id) || { name: 'Removed' }).name;
+    const friendColor = id => {
+        const i = trip().friends.findIndex(f => f.id === id);
+        return AVATAR_COLORS[(i < 0 ? 0 : i) % AVATAR_COLORS.length];
+    };
+    const avatar = (id, lg) => {
+        const n = friendName(id);
+        return `<span class="avatar${lg ? ' lg' : ''}" style="background:${friendColor(id)}">${esc(n.charAt(0).toUpperCase())}</span>`;
+    };
+
+    // ---------- Trips ----------
+    function switchTrip(id) {
+        state.currentTripId = id;
+        save();
+        resetForm();
+        render();
+    }
+
+    function newTrip() {
+        const name = prompt('Name for the new trip:', 'New Trip');
+        if (!name || !name.trim()) return;
+        const keepFriends = trip().friends.length &&
+            confirm('Bring the same friends to this trip?\n\n' + trip().friends.map(f => f.name).join(', '));
+        const t = {
+            id: uid(), name: name.trim().slice(0, 40),
+            friends: keepFriends ? trip().friends.map(f => ({ id: uid(), name: f.name })) : [],
+            expenses: [],
+        };
+        state.trips.push(t);
+        switchTrip(t.id);
+        toast('Trip created ✈️');
+    }
+
+    function renameTrip() {
+        const name = prompt('Rename this trip:', trip().name);
+        if (!name || !name.trim()) return;
+        trip().name = name.trim().slice(0, 40);
+        save(); render();
+    }
+
+    function deleteTrip() {
+        if (state.trips.length === 1) { alert('This is your only trip. Create another one before deleting this.'); return; }
+        if (!confirm(`Delete "${trip().name}" and all its expenses? This cannot be undone.`)) return;
+        state.trips = state.trips.filter(t => t.id !== state.currentTripId);
+        switchTrip(state.trips[0].id);
+        toast('Trip deleted');
+    }
+
+    // ---------- Friends ----------
+    function addFriend() {
+        const input = $('friendName');
+        const names = input.value.split(',').map(s => s.trim()).filter(Boolean);
+        if (!names.length) { input.focus(); return; }
+        let added = 0;
+        names.forEach(raw => {
+            const name = raw.slice(0, 30);
+            if (trip().friends.some(f => f.name.toLowerCase() === name.toLowerCase())) return;
+            trip().friends.push({ id: uid(), name });
+            added++;
+        });
+        input.value = '';
+        save(); render();
+        toast(added ? `Added ${added} friend${added > 1 ? 's' : ''} 👋` : 'Already on the list');
+    }
+
+    function removeFriend(id) {
+        const used = trip().expenses.some(e => e.payerId === id || e.splitIds.includes(id));
+        if (used) {
+            alert(`${friendName(id)} is part of some expenses. Delete those expenses first, then remove them.`);
+            return;
+        }
+        if (!confirm(`Remove ${friendName(id)} from this trip?`)) return;
+        trip().friends = trip().friends.filter(f => f.id !== id);
+        save(); render();
+    }
+
+    // ---------- Expenses ----------
+    let selectedCategory = 'food';
+
+    function resetForm() {
+        $('amount').value = '';
+        $('description').value = '';
+        $('date').value = todayISO();
+        selectedCategory = 'food';
+        splitSelection = null;
+    }
+
+    let splitSelection = null; // null = everyone
+
+    function getSplitIds() {
+        return [...document.querySelectorAll('#splitPicker input:checked')].map(i => i.value);
+    }
+
+    function toggleAllSplit() {
+        const boxes = [...document.querySelectorAll('#splitPicker input')];
+        const allOn = boxes.every(b => b.checked);
+        boxes.forEach(b => b.checked = !allOn);
+        onSplitChange();
+    }
+
+    function onSplitChange() {
+        splitSelection = getSplitIds();
+        updateSplitNote();
+    }
+
+    function updateSplitNote() {
+        const ids = getSplitIds();
+        const total = trip().friends.length;
+        const amt = parseFloat($('amount').value) || 0;
+        $('toggleSplitBtn').textContent = ids.length === total ? 'Select none' : 'Select all';
+        if (!ids.length) { $('splitNote').textContent = 'Pick at least one person to split with.'; return; }
+        const who = ids.length === total ? 'everyone' : `${ids.length} of ${total} people`;
+        $('splitNote').textContent = amt > 0
+            ? `Split between ${who}: ${money(amt / ids.length)} each`
+            : `Split equally between ${who}`;
+    }
+
+    function addExpense() {
+        const t = trip();
+        if (t.friends.length === 0) { alert('Add some friends first 👥'); $('friendName').focus(); return; }
+        const amount = parseFloat($('amount').value);
+        if (!amount || amount <= 0) { alert('Please enter a valid amount'); $('amount').focus(); return; }
+        const splitIds = getSplitIds();
+        if (!splitIds.length) { alert('Pick at least one person to split this with'); return; }
+
+        t.expenses.push({
+            id: uid(),
+            payerId: $('payer').value,
+            amount: Math.round(amount * 100) / 100,
+            description: $('description').value.trim(),
+            category: selectedCategory,
+            date: $('date').value || todayISO(),
+            splitIds,
+        });
+        const keepDate = $('date').value;
+        resetForm();
+        $('date').value = keepDate;
+        save(); render();
+        toast('Expense added ✓');
+    }
+
+    function deleteExpense(id) {
+        if (!confirm('Delete this expense?')) return;
+        trip().expenses = trip().expenses.filter(e => e.id !== id);
+        save(); render();
+    }
+
+    function clearExpenses() {
+        if (!trip().expenses.length) return;
+        if (!confirm(`Clear ALL expenses in "${trip().name}"? Friends will be kept. This cannot be undone.`)) return;
+        trip().expenses = [];
+        save(); render();
+    }
+
+    // ---------- Maths ----------
+    function computeBalances() {
+        const t = trip();
+        const paid = {}, share = {};
+        t.friends.forEach(f => { paid[f.id] = 0; share[f.id] = 0; });
+        t.expenses.forEach(e => {
+            if (paid[e.payerId] !== undefined) paid[e.payerId] += e.amount;
+            const ids = e.splitIds.filter(id => share[id] !== undefined);
+            if (!ids.length) return;
+            const each = e.amount / ids.length;
+            ids.forEach(id => share[id] += each);
+        });
+        return t.friends.map(f => ({ id: f.id, paid: paid[f.id], share: share[f.id], net: paid[f.id] - share[f.id] }));
+    }
+
+    // Fewest payments needed to settle everyone up
+    function computeSettlements(balances) {
+        const creditors = balances.filter(b => b.net > 0.009).map(b => ({ id: b.id, amt: b.net })).sort((a, b) => b.amt - a.amt);
+        const debtors = balances.filter(b => b.net < -0.009).map(b => ({ id: b.id, amt: -b.net })).sort((a, b) => b.amt - a.amt);
+        const result = [];
+        let i = 0, j = 0;
+        while (i < debtors.length && j < creditors.length) {
+            const pay = Math.min(debtors[i].amt, creditors[j].amt);
+            if (pay > 0.009) result.push({ from: debtors[i].id, to: creditors[j].id, amount: pay });
+            debtors[i].amt -= pay;
+            creditors[j].amt -= pay;
+            if (debtors[i].amt < 0.01) i++;
+            if (creditors[j].amt < 0.01) j++;
+        }
+        return result;
+    }
+
+    // ---------- Render ----------
+    function render() {
+        const t = trip();
+
+        // Trip dropdown
+        $('tripSelect').innerHTML = state.trips.map(tr =>
+            `<option value="${tr.id}" ${tr.id === t.id ? 'selected' : ''}>🧳 ${esc(tr.name)}</option>`).join('');
+        document.title = `${t.name} · Expense Splitter`;
+
+        // Friends
+        $('friendCount').textContent = `${t.friends.length} ${t.friends.length === 1 ? 'person' : 'people'}`;
+        $('friendsList').innerHTML = t.friends.length
+            ? t.friends.map(f => `<span class="friend-chip">${avatar(f.id)}${esc(f.name)}
+                <button onclick="removeFriend('${f.id}')" title="Remove ${esc(f.name)}" aria-label="Remove ${esc(f.name)}">✕</button></span>`).join('')
+            : '<span class="split-note">No friends yet. Add everyone who is coming on the trip 👇</span>';
+
+        // Payer dropdown (keep selection)
+        const prevPayer = $('payer').value;
+        $('payer').innerHTML = t.friends.length
+            ? t.friends.map(f => `<option value="${f.id}" ${f.id === prevPayer ? 'selected' : ''}>${esc(f.name)}</option>`).join('')
+            : '<option value="">Add friends first</option>';
+
+        // Category picker
+        $('catPicker').innerHTML = CATEGORIES.map(c => `
+            <label class="cat-option">
+                <input type="radio" name="cat" value="${c.id}" ${c.id === selectedCategory ? 'checked' : ''}
+                       onchange="selectedCategory=this.value">
+                <span>${c.emoji} ${c.label}</span>
+            </label>`).join('');
+
+        // Split picker (keep custom selection if any)
+        const sel = splitSelection ? splitSelection.filter(id => friendById(id)) : null;
+        $('splitPicker').innerHTML = t.friends.map(f => `
+            <label class="split-option">
+                <input type="checkbox" value="${f.id}" ${!sel || sel.includes(f.id) ? 'checked' : ''} onchange="onSplitChange()">
+                <span>${avatar(f.id)}${esc(f.name)}</span>
+            </label>`).join('');
+        updateSplitNote();
+
+        // Stats
+        const total = t.expenses.reduce((s, e) => s + e.amount, 0);
+        $('tripTotal').textContent = money(total);
+        $('expenseCount').textContent = t.expenses.length;
+        $('avgPerPerson').textContent = money(t.friends.length ? total / t.friends.length : 0);
+
+        // Balances & settlements
+        const balances = computeBalances();
+        const settlements = computeSettlements(balances);
+        $('settlements').innerHTML = !t.expenses.length
+            ? '<div class="empty">Add an expense to see who owes whom.</div>'
+            : settlements.length
+                ? settlements.map(s => `
+                    <div class="settle-item">
+                        ${avatar(s.from)}<b>${esc(friendName(s.from))}</b>
+                        <span class="arrow">pays →</span>
+                        ${avatar(s.to)}<b>${esc(friendName(s.to))}</b>
+                        <span class="amt">${money(s.amount)}</span>
+                    </div>`).join('')
+                : '<div class="all-settled">🎉 Everyone is settled up!</div>';
+
+        $('balances').innerHTML = balances.length
+            ? balances.map(b => `
+                <div class="balance-row">
+                    ${avatar(b.id, true)}
+                    <div class="balance-name">${esc(friendName(b.id))}
+                        <small>Paid ${money(b.paid)} · Share ${money(b.share)}</small></div>
+                    <div class="balance-amt ${b.net > 0.009 ? 'pos' : b.net < -0.009 ? 'neg' : ''}">
+                        ${b.net > 0.009 ? 'gets back ' + money(b.net) : b.net < -0.009 ? 'owes ' + money(-b.net) : 'settled ✓'}
                     </div>
-                `).join('');
-            }
+                </div>`).join('')
+            : '<div class="empty">No friends yet.</div>';
 
-            // Calculate settlement
-            if (Math.abs(faizanTotal - anisTotal) > 0.01) {
-                const diff = faizanTotal - anisTotal;
-                const settlementDiv = document.getElementById('settlement');
-                const settlementText = document.getElementById('settlement-text');
-                settlementDiv.classList.add('show');
+        // Category breakdown
+        const byCat = CATEGORIES.map(c => ({ ...c, sum: t.expenses.filter(e => catById(e.category).id === c.id).reduce((s, e) => s + e.amount, 0) }))
+            .filter(c => c.sum > 0).sort((a, b) => b.sum - a.sum);
+        $('categoryBreakdown').innerHTML = byCat.length
+            ? byCat.map(c => `
+                <div class="cat-row">
+                    <div class="cat-row-top"><span>${c.emoji} ${c.label}</span><span><b>${money(c.sum)}</b> · ${Math.round(c.sum / total * 100)}%</span></div>
+                    <div class="bar"><div style="width:${(c.sum / byCat[0].sum * 100).toFixed(1)}%"></div></div>
+                </div>`).join('')
+            : '<div class="empty">Nothing spent yet.</div>';
 
-                if (diff > 0) {
-                    settlementText.textContent = `Anis owes Faizan ₹${(Math.round(Math.abs(diff) * 100) / 100).toFixed(2)}`;
-                } else {
-                    settlementText.textContent = `Faizan owes Anis ₹${(Math.round(Math.abs(diff) * 100) / 100).toFixed(2)}`;
-                }
-            } else {
-                document.getElementById('settlement').classList.remove('show');
-            }
+        // Filters
+        const fc = $('filterCat').value || 'all', fp = $('filterPerson').value || 'all';
+        $('filterCat').innerHTML = `<option value="all">All categories</option>` +
+            CATEGORIES.map(c => `<option value="${c.id}" ${c.id === fc ? 'selected' : ''}>${c.emoji} ${c.label}</option>`).join('');
+        $('filterPerson').innerHTML = `<option value="all">Everyone</option>` +
+            t.friends.map(f => `<option value="${f.id}" ${f.id === fp ? 'selected' : ''}>Paid by ${esc(f.name)}</option>`).join('');
 
-            localStorage.setItem('goa_expenses', JSON.stringify(expenses));
-        }
+        // History (newest date first, grouped by day)
+        const list = t.expenses
+            .filter(e => fc === 'all' || catById(e.category).id === fc)
+            .filter(e => fp === 'all' || e.payerId === fp)
+            .map((e, idx) => ({ e, idx }))
+            .sort((a, b) => (b.e.date || '').localeCompare(a.e.date || '') || b.idx - a.idx)
+            .map(x => x.e);
 
-        function addExpense() {
-            const payer = document.getElementById('payer').value;
-            const amount = parseFloat(document.getElementById('amount').value);
-            const description = document.getElementById('description').value;
-
-            if (!amount || amount <= 0) {
-                alert('Please enter a valid amount');
-                return;
-            }
-
-            const now = new Date();
-            const dateStr = now.toLocaleDateString('en-IN', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-
-            expenses.push({ payer, amount, description, date: dateStr });
-            document.getElementById('amount').value = '';
-            document.getElementById('description').value = '';
-            
-            // Show success message
-            const successMsg = document.getElementById('successMessage');
-            successMsg.classList.add('show');
-            setTimeout(() => successMsg.classList.remove('show'), 2000);
-
-            updateUI();
-        }
-
-        function deleteExpense(index) {
-            if (confirm('Delete this expense?')) {
-                expenses.splice(index, 1);
-                updateUI();
-            }
-        }
-
-        function clearAll() {
-            if (confirm('Are you sure you want to clear all expenses? This cannot be undone.')) {
-                expenses = [];
-                updateUI();
-            }
-        }
-
-        function downloadExpenses() {
-            if (expenses.length === 0) {
-                alert('No expenses to download');
-                return;
-            }
-
-            let csv = 'Payer,Amount (₹),Description,Date\n';
-            expenses.forEach(e => {
-                csv += `${e.payer},${e.amount},"${e.description || '-'}",${e.date}\n`;
+        if (!t.expenses.length) {
+            $('expenseList').innerHTML = '<div class="empty">No expenses yet. Start adding! 🌴</div>';
+        } else if (!list.length) {
+            $('expenseList').innerHTML = '<div class="empty">No expenses match this filter.</div>';
+        } else {
+            let lastDate = null, html = '';
+            list.forEach(e => {
+                if (e.date !== lastDate) { html += `<div class="date-divider">${prettyDate(e.date)}</div>`; lastDate = e.date; }
+                const c = catById(e.category);
+                const splitText = e.splitIds.length === t.friends.length ? 'split with everyone'
+                    : 'split with ' + e.splitIds.map(friendName).map(esc).join(', ');
+                html += `
+                    <div class="expense">
+                        <div class="expense-emoji" title="${c.label}">${c.emoji}</div>
+                        <div class="expense-main">
+                            <div class="expense-title">${esc(e.description || c.label)}</div>
+                            <div class="expense-meta"><b>${esc(friendName(e.payerId))}</b> paid · ${splitText}</div>
+                        </div>
+                        <div class="expense-amt">${money(e.amount)}</div>
+                        <button class="btn-icon" onclick="deleteExpense('${e.id}')" title="Delete" aria-label="Delete expense">🗑️</button>
+                    </div>`;
             });
-
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'goa-trip-expenses.csv';
-            a.click();
-            window.URL.revokeObjectURL(url);
+            $('expenseList').innerHTML = html;
         }
+    }
 
-        updateUI();
-    </script>
+    // ---------- Share & export ----------
+    function buildSummary() {
+        const t = trip();
+        const total = t.expenses.reduce((s, e) => s + e.amount, 0);
+        const balances = computeBalances();
+        const settlements = computeSettlements(balances);
+        let msg = `🧳 *${t.name}*\n`;
+        msg += `💰 Total spent: *${money(total)}* (${t.expenses.length} expenses)\n`;
+        msg += `👥 ${t.friends.map(f => f.name).join(', ')}\n\n`;
+        msg += `*Who paid what*\n`;
+        balances.forEach(b => { msg += `• ${friendName(b.id)}: paid ${money(b.paid)}, share ${money(b.share)}\n`; });
+        msg += `\n*To settle up* 🤝\n`;
+        msg += settlements.length
+            ? settlements.map(s => `• ${friendName(s.from)} pays ${friendName(s.to)} *${money(s.amount)}*`).join('\n')
+            : '• Everyone is settled up 🎉';
+        msg += `\n\nSent from Trip Expense Splitter: ${location.href.split('#')[0]}`;
+        return msg;
+    }
+
+    function shareWhatsApp() {
+        if (!trip().expenses.length) { alert('Add some expenses first'); return; }
+        window.open('https://wa.me/?text=' + encodeURIComponent(buildSummary()), '_blank');
+    }
+
+    function downloadCSV() {
+        const t = trip();
+        if (!t.expenses.length) { alert('No expenses to download'); return; }
+        const q = v => `"${String(v).replace(/"/g, '""')}"`;
+        let csv = 'Date,Paid by,Amount (INR),Category,Description,Split between\n';
+        t.expenses.forEach(e => {
+            csv += [e.date || '', friendName(e.payerId), e.amount, catById(e.category).label,
+                    e.description || '', e.splitIds.map(friendName).join('; ')].map(q).join(',') + '\n';
+        });
+        const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = t.name.replace(/[^\w\- ]+/g, '').trim().replace(/\s+/g, '-').toLowerCase() + '-expenses.csv';
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    }
+
+    // ---------- Start ----------
+    $('amount').addEventListener('input', updateSplitNote);
+    $('date').value = todayISO();
+    save();
+    render();
+</script>
 </body>
 </html>
